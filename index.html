@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Recipe Finder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="auth-page" id="authPage">
+    <div class="auth-card">
+      <h1>Recipe Finder</h1>
+      <p class="subtitle">Login or register to access recipe search</p>
+
+      <div class="auth-toggle">
+        <button id="showLoginBtn" class="active">Login</button>
+        <button id="showRegisterBtn">Register</button>
+      </div>
+
+      <form id="loginForm" class="auth-form active">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" required placeholder="you@example.com" />
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" required placeholder="Enter password" />
+        </div>
+        <p class="auth-message" id="loginMessage"></p>
+        <button type="submit" class="primary-btn">Login</button>
+      </form>
+
+      <form id="registerForm" class="auth-form">
+        <div class="form-group">
+          <label for="registerName">Name</label>
+          <input type="text" id="registerName" required placeholder="Your name" />
+        </div>
+        <div class="form-group">
+          <label for="registerEmail">Email</label>
+          <input type="email" id="registerEmail" required placeholder="you@example.com" />
+        </div>
+        <div class="form-group">
+          <label for="registerPassword">Password</label>
+          <input type="password" id="registerPassword" required placeholder="Choose a password" />
+          <div id="passwordStrength" class="password-strength-indicator" style="display:none; margin-top:8px;">
+            <div class="strength-bar"></div>
+            <p class="strength-text"></p>
+          </div>
+        </div>
+        <p class="auth-message" id="registerMessage"></p>
+        <button type="submit" class="primary-btn">Register</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="container app-page" id="appPage">
+    <div class="top-bar">
+      <div>
+        <h1>🍽️ Recipe Finder</h1>
+        <p class="subtitle">Search recipes by name, ingredient, category or area</p>
+      </div>
+      <div class="user-actions">
+        <span id="userGreeting"></span>
+        <div class="side-icons">
+          <button id="darkModeToggle" class="icon-btn" title="Toggle dark mode">🌙</button>
+          <button id="favoritesBtn" class="icon-btn" title="Favorites">❤️</button>
+          <button id="profileBtn" class="icon-btn" title="Profile">👤</button>
+        </div>
+        <button id="adminBtn" class="icon-btn" title="Admin Panel" style="display:none;">🛠️</button>
+        <button id="logoutBtn" class="icon-btn" title="Logout">🚪</button>
+      </div>
+    </div>
+
+    <div id="adminInfoPanel" class="admin-info-panel" style="display:none;">
+      <div class="stats-item">
+        <strong id="adminTotalUsers">0</strong>
+        <span>Total users</span>
+      </div>
+      <div class="stats-item">
+        <strong id="adminTotalLogs">0</strong>
+        <span>Activity records</span>
+      </div>
+      <div class="stats-item">
+        <strong id="adminTotalAdmins">0</strong>
+        <span>Admins</span>
+      </div>
+    </div>
+
+    <div class="search-box">
+      <div class="search-row">
+        <input type="text" id="searchInput" placeholder="Search potato, paneer, egg, chicken, rice..." />
+        <button id="searchBtn">🔍</button>
+
+        <select id="categoryFilter">
+          <option value="all">All Categories</option>
+          <option value="Indian Veg">Indian Veg</option>
+          <option value="Indian Chicken">Indian Chicken</option>
+          <option value="Chinese">Chinese</option>
+          <option value="French">French</option>
+          <option value="Italian">Italian</option>
+          <option value="Fast Food">Fast Food</option>
+          <option value="Dessert">Dessert</option>
+          <option value="Snacks">Snacks</option>
+          <option value="Breakfast">Breakfast</option>
+        </select>
+
+        <select id="languageSelect">
+          <option value="en">English</option>
+          <option value="kn">Kannada</option>
+          <option value="hi">Hindi</option>
+          <option value="ta">Tamil</option>
+          <option value="te">Telugu</option>
+          <option value="ml">Malayalam</option>
+          <option value="mr">Marathi</option>
+          <option value="bn">Bengali</option>
+          <option value="gu">Gujarati</option>
+          <option value="pa">Punjabi</option>
+          <option value="ur">Urdu</option>
+        </select>
+
+        <button id="voiceBtn">🎙️</button>
+      </div>
+
+      <div id="searchHistoryDropdown" class="search-history" style="display:none;">
+        <p class="search-history-title">Recent Searches</p>
+        <div id="searchHistoryList"></div>
+      </div>
+
+      <div id="quickCategoryButtons" class="quick-categories" style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;"></div>
+    </div>
+
+    <div id="google_translate_element"></div>
+
+    <p id="loadingText">Loading recipes...</p>
+    <p id="resultCount"></p>
+
+    <div id="recipeContainer"></div>
+  </div>
+
+  <div class="admin-page" id="adminPage">
+    <div class="admin-panel">
+      <div class="top-bar">
+        <div>
+          <h1>Admin Dashboard</h1>
+          <p class="subtitle">View registered users and activity history</p>
+        </div>
+        <div class="user-actions">
+          <button id="adminBackBtn" class="primary-btn">Back to App</button>
+        </div>
+      </div>
+
+      <div id="adminStats" class="admin-stats"></div>
+
+      <div class="admin-section">
+        <h2>Data Management</h2>
+        <details id="dataManagementDetails" class="data-minimize">
+          <summary class="mini-summary" title="Open data actions">Data ⚙️</summary>
+          <div class="mini-actions" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+            <button id="backupDataBtn" class="secondary-btn">💾 Backup</button>
+            <button id="restoreDataBtn" class="secondary-btn">📂 Restore</button>
+            <button id="exportCsvBtn" class="secondary-btn">📊 Export CSV</button>
+            <button id="analyticsBtn" class="secondary-btn">📈 Analytics</button>
+            <button id="batchDeleteBtn" class="secondary-btn">🗑️ Batch Delete</button>
+            <button id="openActivityRecordsBtn" class="secondary-btn">📋 Activity</button>
+          </div>
+        </details>
+        <input type="file" id="restoreFileInput" style="display:none;" accept=".json" />
+        <p class="auth-message" id="backupMessage"></p>
+      </div>
+
+      <div class="admin-section">
+        <h2>Add / Edit Recipe</h2>
+        <form id="addRecipeForm" class="admin-form">
+          <input type="hidden" id="recipeId" />
+          <div class="form-group">
+            <label for="newRecipeName">Name</label>
+            <input id="newRecipeName" required placeholder="Recipe name" />
+          </div>
+          <div class="form-group">
+            <label for="newRecipeCategory">Category</label>
+            <input id="newRecipeCategory" placeholder="e.g. Indian Veg" />
+          </div>
+          <div class="form-group">
+            <label for="newRecipeArea">Area</label>
+            <input id="newRecipeArea" placeholder="e.g. North India" />
+          </div>
+          <div class="form-group">
+            <label for="newRecipeTags">Tags (space separated)</label>
+            <input id="newRecipeTags" placeholder="paneer tomato butter" />
+          </div>
+          <div class="form-group">
+            <label for="newRecipeImage">Image filename (optional)</label>
+            <input id="newRecipeImage" placeholder="paneer-butter-masala.jpg" />
+          </div>
+          <div class="form-row" style="gap:10px; flex-wrap:wrap;">
+            <button type="submit" class="primary-btn">Save Recipe</button>
+            <button type="button" id="cancelEditRecipe" class="secondary-btn" style="display:none;">Cancel Edit</button>
+          </div>
+          <p class="auth-message" id="addRecipeMessage"></p>
+        </form>
+      </div>
+
+      <div class="admin-section">
+        <h2>Manage Recipes</h2>
+        <div class="search-row admin-search-row" style="margin-bottom:12px; gap:8px; display:flex; flex-wrap:wrap; align-items:center;">
+          <input type="text" id="adminRecipeSearch" placeholder="Search recipes by name, category, area or ingredient..." style="flex:1; min-width:220px;" />
+          <button id="adminRecipeSearchClear" class="secondary-btn" type="button">Clear</button>
+        </div>
+        <div id="adminRecipesList" class="admin-list"></div>
+      </div>
+
+      <div class="admin-section">
+        <h2>Registered Users</h2>
+        <div id="adminUsersList" class="admin-list"></div>
+      </div>
+
+      <div class="admin-section">
+        <h2>User Activity Log</h2>
+        <div id="adminLogsList" class="admin-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="recipeModal" class="modal">
+    <div class="modal-content">
+      <span id="closeModal">&times;</span>
+      <div id="recipeDetails"></div>
+    </div>
+  </div>
+
+  <div id="userProfileModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="closeProfileModal" style="cursor:pointer;">&times;</span>
+      <h2>User Profile</h2>
+      <div id="profileContent"></div>
+    </div>
+  </div>
+
+  <div id="favoritesModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span id="closeFavoritesModal" style="cursor:pointer;">&times;</span>
+      <h2>Favorite Recipes</h2>
+      <div id="favoritesContent"></div>
+    </div>
+  </div>
+
+  <div id="adminActivityModal" class="admin-modal" style="display:none;">
+    <div class="admin-modal-content">
+      <span id="closeActivityModal">&times;</span>
+      <h2>Activity Records</h2>
+      <div class="form-group" style="margin-bottom: 12px;">
+        <label for="adminActivityUserFilter">Filter by user</label>
+        <select id="adminActivityUserFilter">
+          <option value="all">All users</option>
+        </select>
+      </div>
+      <div id="adminActivityList" class="admin-list"></div>
+      <div style="margin-top:16px; text-align:right;">
+        <button type="button" id="closeActivityModalBtn" class="secondary-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: "en",
+        includedLanguages: "en,kn,hi,ta,te,ml,mr,bn,gu,pa,ur",
+        autoDisplay: false
+      }, "google_translate_element");
+    }
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+</body>
+</html>
